@@ -18,7 +18,10 @@ export const alertSlice = createSlice({
             state.alert = null;
           }, timeout);
         }
-    }
+    },
+    removeAlert: (state) => {
+      state.alert = null;
+    },
   },
 });
 
