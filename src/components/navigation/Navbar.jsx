@@ -12,8 +12,8 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
-import { connect } from 'react-redux'
-import { logout } from '../../redux/actions/auth'
+// import { connect } from 'react-redux'
+// import { logout } from '../../redux/actions/auth'
 import { Navigate } from 'react-router-dom'
 
 const products = [
@@ -311,6 +311,9 @@ const mapStateToProps = state => ({
   user: state.Auth.user
 })
 
-export default connect (mapStateToProps,{
-  logout,
-}) (Navbar)
+// export default connect (mapStateToProps,{
+//   logout,
+// }) (Navbar)
+
+
+export default Navbar

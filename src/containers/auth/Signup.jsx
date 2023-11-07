@@ -1,27 +1,26 @@
-
+import { useDispatch } from 'react-redux'
 import Layout from '../../hocs/Layout'
 import { useState,useEffect } from 'react'
-import {connect} from 'react-redux'
-import { signup } from '../../redux/actions/auth'
+import {signup} from '../../redux/slices/authSlice'
+import { readSignup } from '../../redux/thunks/authThunk'
 
-function Signup  ({
-  signup
-}) {
+function Signup() {
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0,0);
+        readSignup()
     }, [])
 
-    const [accountCreated, setAccountCreated] = useState(false);
+    const dispatch = useDispatch();
 
     const [formData, setFormData] = useState({
-        first_name: '',
-        last_name: '',
-        email: '',
-        password: '',
-        re_password: ''
+      first_name: '',
+      last_name: '',
+      email: '',
+      password: '',
+      re_password: ''
     })
-    
+  
     const { 
       first_name,
       last_name,
@@ -31,13 +30,16 @@ function Signup  ({
     } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+      
+    const onSubmit = (e) => {
+    e.preventDefault()
+    dispatch(readSignup({ first_name, last_name, email, password, re_password }));
+    
+    window.scrollTo(0, 0)
+    console.log(formData);
+    console.log(first_name, last_name, email, password, re_password);
+    }
 
-    const onSubmit = e =>{
-    e.preventDefault();
-    signup(first_name, last_name, email, password, re_password);
-    setAccountCreated(true);
-    window.scrollTo(0,0);
-    };
 
     return (
       <>
@@ -55,7 +57,7 @@ function Signup  ({
           </div>
   
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-             <form onSubmit={e=>onSubmit(e)} className="space-y-6">
+            <form onSubmit={e=>onSubmit(e)} className="space-y-6">
               <div>
                 <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
                   First Name
@@ -157,13 +159,7 @@ function Signup  ({
     )
 }
 
-const mapStateToProps = state => ({
 
-});
+export default Signup
 
-export default connect(mapStateToProps, {
-  signup
-}) (Signup);
-
-  
   
