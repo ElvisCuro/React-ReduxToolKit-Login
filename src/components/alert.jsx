@@ -1,43 +1,37 @@
-/* eslint-disable react/prop-types */
-import {Fragment} from 'react'
-import {connect} from 'react-redux'
+import { Fragment, useEffect } from 'react';
+import { BeakerIcon } from '@heroicons/react/24/solid';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeAlert } from '../redux/slices/alertSlice';
 
-import { BeakerIcon } from '@heroicons/react/24/solid'
+function Alert() {
+  const alert = useSelector(state => state.Alert.alert)
+  const dispatch = useDispatch()
 
-function Alert ( {alert}) {
 
-    const displayAlert = () => {
-        if (alert !== null){
-            return (
-                // eslint-disable-next-line react/prop-types
-                <div className={`bg-${alert.alertType}-50 rounded-md p-4`}>
-                <div className="flex">
-                    <div className="flex-shrink-0">
-                    <BeakerIcon className={`h-5 w-5 text-${alert.alertType}-300`} aria-hidden="true" />
-                    </div>
-                    <div className="ml-3">
-                    <p className={`text-sm font-medium text-${alert.alertType}-800`}>{alert.msg}</p>
-                    </div>
-                </div>
-                </div>
-            )
-        } else {
-            return(
-                <>
-                </>
-            )
-        }
-    }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      dispatch(removeAlert())
+    }, 5000)
 
-    return (
-        <Fragment>
-            {displayAlert()}
-        </Fragment>
-    )
+    return () => clearTimeout(timeout)
+  }, [alert]) 
+
+  return (
+    <Fragment>
+      {alert  && (
+        <div className={`bg-${alert.alertType}-500 rounded-md p-4 z-10`}>
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <BeakerIcon className={`h-5 w-5 text-${alert.alertType}-300`} aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <p className={`text-sm font-medium text-${alert.alertType}-800`}>{alert.msg}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </Fragment>
+  );
 }
 
-const mapStateToProps = state => ({
-    alert: state.Alert.alert
-})
-
-export default connect(mapStateToProps)(Alert)
+export default Alert;

@@ -2,22 +2,14 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Error404 from './containers/errors/Error404'
 import Home from './containers/Home'
-import { useEffect } from 'react';
-import {Signup} from './containers/auth/Signup'
-import {useDispatch} from 'react-redux'
-import { readSignup } from './redux/thunks/authThunk';
-import { showAlert } from './redux/thunks/alertThunk';
+
+import Signup from './containers/auth/Signup'
+import Login from './containers/auth/Login'
+import Activate from './containers/auth/Activate'
 
 
 function App() {
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(readSignup());
-    dispatch(showAlert());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 return (
   <>
     <Router>
@@ -26,6 +18,8 @@ return (
         <Route exact path="/" element={<Home/>}/>
         {/* Autenticacion */}
         <Route exact path='/signup' element={<Signup/>}/>
+        <Route exact path='/login' element={<Login/>}/>
+        <Route exact path='/activate/:uid/:token' element={<Activate/>}/>
       </Routes>
     </Router>
   </>
