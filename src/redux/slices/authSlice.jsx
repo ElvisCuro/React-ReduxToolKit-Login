@@ -36,12 +36,13 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
     },
     loader: (state, action) => {
-      state.user = action.payload;
+      state.loading = false;
+      state.user=action.payload
+
+
     }
   },
   extraReducers: (builder) => {
-    
-    
     builder.addCase(authSignup.fulfilled, (state, action) => {
       state.loading = false
       state.user = action.payload 
@@ -56,12 +57,13 @@ export const authSlice = createSlice({
     })
 
     builder.addCase(authLoader.fulfilled, (state,action) => {
-      state.user = action.payload 
-    })
+      state.loading = false;
+      state.user = action.payload;
 
+    })
   },
 });
 
-export const { signup,activate,login,loader } = authSlice.actions;
+export const { signup, activate, login, loader } = authSlice.actions;
 
 export default authSlice.reducer;

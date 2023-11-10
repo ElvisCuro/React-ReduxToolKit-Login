@@ -37,11 +37,8 @@ function Login  () {
     console.log(email,password);
     setAccountCreated(true);
     window.scrollTo(0,0);
+    };
 
-};
-
-dispatch(authLoader({ access: localStorage.getItem('access') }));
-dispatch(loader());
 
     return (
       <>

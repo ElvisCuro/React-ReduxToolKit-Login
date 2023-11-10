@@ -121,14 +121,8 @@ export const authLogin = createAsyncThunk(
                     msg: 'Inicio de sesión con éxito',
                     alertType: 'green' 
                 }));
-                dispatch({
-                    payload: res.data
-                });
-
-                // Llamar a authLoader con el token de acceso como parámetro
                 dispatch(authLoader({ 'access': res.data.access }));
-                dispatch(authLoader({ access: res.data.access }));
-                dispatch(loader());
+                return res.data
             } else {
                 dispatch(setAlert({
                     msg: 'Error al iniciar sesión.',
@@ -143,7 +137,7 @@ export const authLogin = createAsyncThunk(
 
 export const authLoader = createAsyncThunk(
     'auth/authLoader', 
-    async ({ access }, { rejectWithValue, dispatch }) => {
+    async ({ access }, { rejectWithValue}) => {
         if (access) {
             const config = {
                 headers: {
@@ -151,19 +145,13 @@ export const authLoader = createAsyncThunk(
                     'Accept': 'application/json'
                 }
             };
-
+    
             try {
                 const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/auth/users/me/`,config);
-                console.log(config)
-            
+                console.log(res)
                 if (res.status === 200) {
-                    dispatch({
-                        payload: res.data,
-                        
-                    });
-                    return {
-                        payload: res.data 
-                    };
+                    return res.data;
+
                 } else {
                     throw new Error('La solicitud no fue exitosa');
                 }
