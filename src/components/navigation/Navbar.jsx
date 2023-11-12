@@ -12,9 +12,9 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
-// import { connect } from 'react-redux'
-// import { logout } from '../../redux/actions/auth'
 import { Navigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../../redux/slices/authSlice'
 
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -33,17 +33,21 @@ function classNames(...classes) {
 }
 
 
-function Navbar({
-  isAuthenticated,
-  user,
-  logout,
-}) {
+function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [redirect, setRedirect] = useState(false);
 
+  const dispatch = useDispatch()
+
+  const isAuthenticated =useSelector(
+  
+      state=> state.Auth.isAuthenticated
+  )
+
+
   const logoutHandler = () => {
-    logout()
+    dispatch(logout());
     setRedirect(true);
   }
 
@@ -303,15 +307,5 @@ function Navbar({
     </>
   )
 }
-
-const mapStateToProps = state => ({
-  isAuthenticated: state.Auth.isAuthenticated,
-  user: state.Auth.user
-})
-
-// export default connect (mapStateToProps,{
-//   logout,
-// }) (Navbar)
-
 
 export default Navbar

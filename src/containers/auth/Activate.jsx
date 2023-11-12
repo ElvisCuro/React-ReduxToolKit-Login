@@ -6,9 +6,6 @@ import { Navigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { authActivate } from '../../redux/thunks/authThunk'
 
-// import { Audio } from 'react-loader-spinner';
-
-
 const Activate = () =>{
 
     const dispatch = useDispatch()

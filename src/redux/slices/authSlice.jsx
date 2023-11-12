@@ -51,7 +51,14 @@ export const authSlice = createSlice({
     refresh:(state,action )=>{
       state.access=action.payload
     },
-
+    logout:(state)=>{
+      localStorage.removeItem('access')
+      localStorage.removeItem('refresh')
+      state.access =null,
+      state.refresh=null,
+      state.isAuthenticated= false,
+      state.user= null
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(authSignup.fulfilled, (state, action) => {
@@ -79,10 +86,11 @@ export const authSlice = createSlice({
 
     builder.addCase(authRefresh.fulfilled, (state,action) => {
       state.loading = false;
+      state.payload
     })
   },
 });
 
-export const { signup, activate, login, loader } = authSlice.actions;
+export const { signup, activate, login, loader,logout } = authSlice.actions;
 
 export default authSlice.reducer;
