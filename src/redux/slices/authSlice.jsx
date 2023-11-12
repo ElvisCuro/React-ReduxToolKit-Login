@@ -4,6 +4,8 @@ import {
   authActivate,
   authLogin,
   authLoader,
+  authCheck,
+  authRefresh,
 } from "../thunks/authThunk";
 
 const initialState = {
@@ -30,17 +32,26 @@ export const authSlice = createSlice({
       state.loading = false;
     },
     login: (state, action) => {
-      state.access = action.payload.access;
-      state.refresh = action.payload.refresh;
-      state.isAuthenticated = true;
-      state.user = action.payload.user;
+      if (action.payload && action.payload.access && action.payload.refresh) {
+        localStorage.setItem('access', action.payload.access);
+        localStorage.setItem('refresh', action.payload.refresh);
+    
+        state.access = action.payload.access;
+        state.refresh = action.payload.refresh;
+        state.isAuthenticated = true;
+      }
     },
     loader: (state, action) => {
       state.loading = false;
       state.user=action.payload
+    },
+    check:(state)=>{
+      state
+    },
+    refresh:(state,action )=>{
+      state.access=action.payload
+    },
 
-
-    }
   },
   extraReducers: (builder) => {
     builder.addCase(authSignup.fulfilled, (state, action) => {
@@ -52,14 +63,22 @@ export const authSlice = createSlice({
       state.loading = false
     })
 
-    builder.addCase(authLogin.fulfilled, (state,action) => {
-      state.user = action.payload 
+    builder.addCase(authLogin.fulfilled, (state) => {
+      state.loading = false;
     })
 
     builder.addCase(authLoader.fulfilled, (state,action) => {
       state.loading = false;
       state.user = action.payload;
 
+    })
+
+    builder.addCase(authCheck.fulfilled, (state,action) => {
+      state.isAuthenticated = true;
+    })
+
+    builder.addCase(authRefresh.fulfilled, (state,action) => {
+      state.loading = false;
     })
   },
 });

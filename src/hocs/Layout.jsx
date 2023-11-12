@@ -1,19 +1,22 @@
-// import { check_authenticated,load_user,refresh } from '../redux/actions/auth';
-
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
 
 import Navbar from '../components/navigation/Navbar';
 import Footer from '../components/navigation/Footer';
+import { useDispatch } from 'react-redux';
+import {authCheck, authLoader, authRefresh } from '../redux/thunks/authThunk';
+
 
 const Layout = (props) => {
+    const dispatch = useDispatch()
 
-    useEffect(()=>{
+useEffect(() => {
+    dispatch(authRefresh({ access: localStorage.getItem('access') }));
+    dispatch(authCheck({ access: localStorage.getItem('access') }));
+    dispatch(authLoader({ access: localStorage.getItem('access') }));
+  }, []);
 
-    },[]);
 
     return(
         <div>
@@ -25,8 +28,5 @@ const Layout = (props) => {
     )
 }
 
-// export default connect (null,{
-//     check_authenticated,load_user,refresh
-// }) (Layout)
 
 export default Layout

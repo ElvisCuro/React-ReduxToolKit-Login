@@ -2,7 +2,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { setAlert } from '../slices/alertSlice';
-import { loader } from '../slices/authSlice';
+import { login } from '../slices/authSlice';
 
 export const authSignup = createAsyncThunk(
   
@@ -113,15 +113,15 @@ export const authLogin = createAsyncThunk(
 
         try {
             const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/jwt/create/`, body, config);
-            localStorage.setItem('access', res.data.access);
-            localStorage.setItem('refresh', res.data.refresh);
+
 
             if (res.status === 200) {
                 dispatch(setAlert({
                     msg: 'Inicio de sesión con éxito',
                     alertType: 'green' 
                 }));
-                dispatch(authLoader({ 'access': res.data.access }));
+                dispatch(login(res.data));
+                dispatch(authLoader({ access: localStorage.getItem('access') }))
                 return res.data
             } else {
                 dispatch(setAlert({
@@ -137,7 +137,10 @@ export const authLogin = createAsyncThunk(
 
 export const authLoader = createAsyncThunk(
     'auth/authLoader', 
-    async ({ access }, { rejectWithValue}) => {
+    async ({ rejectWithValue}) => {
+        const access = window.localStorage.getItem('access');
+        console.log(access)
+
         if (access) {
             const config = {
                 headers: {
@@ -145,6 +148,7 @@ export const authLoader = createAsyncThunk(
                     'Accept': 'application/json'
                 }
             };
+            console.log(config);
     
             try {
                 const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/auth/users/me/`,config);
@@ -163,3 +167,84 @@ export const authLoader = createAsyncThunk(
             throw new Error('No hay token de acceso en el almacenamiento local');
         }
 });
+
+
+export const authCheck = createAsyncThunk(
+    'auth/authCheck', 
+    async ({ rejectWithValue }) => {
+        const access = window.localStorage.getItem('access');
+        console.log(access)
+
+        if (access) {
+            const config = {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            const body = JSON.stringify({
+                token: localStorage.getItem('access')
+            });
+
+            console.log(body)
+
+            try {
+                const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/jwt/verify/`, body, config);
+
+                if (res.status === 200) {
+                    return res.data; // Puedes ajustar esto según tus necesidades
+                } else {
+                    throw new Error('La verificación del token no fue exitosa');
+                }
+            } catch (err) {
+                // Manejar errores de la verificación
+                return rejectWithValue(err.message);
+            }
+        } else {
+            throw new Error('No hay token de acceso en el almacenamiento local');
+        }
+    }
+);
+
+
+export const authRefresh = createAsyncThunk(
+    'auth/authRefresh',
+    async ({ rejectWithValue }) => {
+        const access = window.localStorage.getItem('access');
+        console.log(access)
+
+        if (access) {
+            const config = {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            const body = JSON.stringify({
+                refresh: localStorage.getItem('refresh')
+            });
+
+            console.log(body)
+            try {
+                const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/jwt/refresh/`, body, config);
+
+                if (res.status === 200) {
+                    // Actualizar el token de acceso en el almacenamiento local
+                    localStorage.setItem('access', res.data.access);
+                    return res.data;
+                } else {
+                    // El refresh falló, manejar según sea necesario
+                    throw new Error('La solicitud de refresh no fue exitosa');
+                }
+            } catch (err) {
+                // Manejar errores de la solicitud de refresh
+                return rejectWithValue(err.message);
+            }
+        } else {
+            // No hay token de acceso en el almacenamiento local
+            throw new Error('No hay token de acceso en el almacenamiento local');
+        }
+    }
+);
