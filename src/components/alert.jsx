@@ -7,14 +7,18 @@ function Alert() {
   const alert = useSelector(state => state.Alert.alert)
   const dispatch = useDispatch()
 
+  console.log(alert)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      dispatch(removeAlert())
-    }, 5000)
+      // Verifica si la alerta sigue siendo la misma antes de llamar a removeAlert
+      if (alert) {
+        dispatch(removeAlert());
+      }
+    }, 5000);
 
-    return () => clearTimeout(timeout)
-  }, [alert]) 
+    return () => clearTimeout(timeout);
+  }, [alert, dispatch]);
 
   return (
     <Fragment>
